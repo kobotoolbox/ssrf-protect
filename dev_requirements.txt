@@ -1,0 +1,9 @@
+# This file is used for testing and development. See
+# https://caremad.io/posts/2013/07/setup-vs-requirement/
+
+# Install this package
+-e .
+
+# Install testing / development requirements
+pytest
+mock
