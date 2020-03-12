@@ -1,4 +1,6 @@
 # coding: utf-8
+from __future__ import absolute_import, unicode_literals
+
 import pytest
 from mock import patch
 
@@ -14,8 +16,8 @@ def test_no_options():
     with pytest.raises(SSRFProtectException) as excinfo:
         SSRFProtect.validate(url)
 
-    assert f'URL {url} is not allowed because it resolves to ' \
-           'a private IP address' in str(excinfo.value)
+    assert 'URL {url} is not allowed because it resolves to ' \
+           'a private IP address'.format(url=url) == str(excinfo.value)
 
 
 def test_allowed_ips():
@@ -36,5 +38,5 @@ def test_denied_ips():
     with pytest.raises(SSRFProtectException) as excinfo:
         SSRFProtect.validate(url, options)
 
-    assert f'URL {url} is not allowed because it resolves to ' \
-           'a denied ip address' in str(excinfo.value)
+    assert 'URL {url} is not allowed because it resolves to ' \
+           'a denied ip address'.format(url=url) == str(excinfo.value)

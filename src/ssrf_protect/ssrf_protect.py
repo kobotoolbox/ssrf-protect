@@ -1,13 +1,19 @@
 # coding: utf-8
+from __future__ import absolute_import, unicode_literals
+
 import socket
-from urllib.parse import urlparse
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from ipaddress import ip_address
+from six import text_type
 
 from .exceptions import SSRFProtectException
 
 
-class SSRFProtect:
+class SSRFProtect(object):
     """
     This class exposes only one static method which validates URLs
 
@@ -30,10 +36,10 @@ class SSRFProtect:
     @staticmethod
     def _get_ip_address(url):
         try:
-            return ip_address(str(url))
+            return ip_address(text_type(url))
         except ValueError:
             host = urlparse(url).hostname
-            return ip_address(str(socket.gethostbyname(host)))
+            return ip_address(text_type(socket.gethostbyname(host)))
 
     @classmethod
     def validate(cls, url, options={}):
@@ -54,17 +60,17 @@ class SSRFProtect:
         ip_address_ = cls._get_ip_address(url)
         allowed_ip_addresses = options.get('allowed_ip_addresses', [])
         if len(allowed_ip_addresses) > 0 and \
-            str(ip_address_) in allowed_ip_addresses:
+                text_type(ip_address_) in allowed_ip_addresses:
             return
 
         if cls.__is_internal_address(ip_address_):
-            raise SSRFProtectException(f'URL {url} is not allowed because it resolves '
-                                       'to a private IP address')
+            raise SSRFProtectException('URL {url} is not allowed because it resolves '
+                                       'to a private IP address'.format(url=url))
 
         denied_ip_addresses = options.get('denied_ip_addresses', [])
         if len(denied_ip_addresses) > 0 and \
-                str(ip_address_) in denied_ip_addresses:
-            raise SSRFProtectException(f'URL {url} is not allowed because it resolves '
-                                       'to a denied ip address')
+                text_type(ip_address_) in denied_ip_addresses:
+            raise SSRFProtectException('URL {url} is not allowed because it resolves '
+                                       'to a denied ip address'.format(url=url))
 
         return
