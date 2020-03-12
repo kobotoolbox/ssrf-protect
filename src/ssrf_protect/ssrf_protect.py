@@ -8,7 +8,12 @@ from .exceptions import SSRFProtectException
 
 
 class SSRFProtect:
+    """
+    This class exposes only one static method which validates URLs
 
+    Inspired by https://github.com/robinhood/thorn/blob/master/thorn/validators.py
+    and https://www.npmjs.com/package/request-filtering-agent
+    """
     def __init__(self):
         pass
 
@@ -32,6 +37,19 @@ class SSRFProtect:
 
     @classmethod
     def validate(cls, url, options={}):
+        """
+        Validates if url resolves to a private IP address.
+
+        Args:
+            url (str)
+            options (dict): it excepts these any of these 2 properties:
+                - allowed_ip_addresses
+                - denied_ip_addresses
+                Both are `list` of IP addresses
+
+        Returns:
+            None if `url` is valid. Otherwise raise an `SSRFProtectException` exception
+        """
 
         ip_address_ = cls._get_ip_address(url)
         allowed_ip_addresses = options.get('allowed_ip_addresses', [])

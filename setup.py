@@ -11,7 +11,7 @@ dep_links = [
 
 
 setup(name='ssrf-protect',
-      version='0.0.1',
+      version='0.1',
       description='Basic library to validate URLs again SSRF attacks',
       author='the ssrf-protect contributors (https://github.com/kobotoolbox/ssrf-protect/graphs/contributors)',
       url='https://github.com/kobotoolbox/ssrf-protect/',
