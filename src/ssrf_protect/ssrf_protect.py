@@ -38,8 +38,18 @@ class SSRFProtect(object):
         try:
             return ip_address(text_type(url))
         except ValueError:
-            host = urlparse(url).hostname
-            return ip_address(text_type(socket.gethostbyname(host)))
+            try:
+                host = urlparse(url).hostname
+                return ip_address(text_type(socket.gethostbyname(host)))
+            except AttributeError:
+                # `urlparse` receives an invalid parameter
+                raise SSRFProtectException(
+                    'Invalid url `{url}`'.format(url=url))
+            except (ValueError, TypeError, socket.gaierror):
+                # `TypeError`, `socket.gaierror: `socket.gethostbyname` receives an invalid parameter
+                # `ValueError`: `ip_address` receives an invalid parameter
+                raise SSRFProtectException(
+                    'Cannot resolve ip address for `{host}`'.format(host=host))
 
     @classmethod
     def validate(cls, url, options={}):

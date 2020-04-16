@@ -27,6 +27,7 @@ def test_allowed_ips():
     }
     assert SSRFProtect.validate(url, options=options) is None
 
+
 @patch('ssrf_protect.ssrf_protect.SSRFProtect._get_ip_address',
        new=MockSSRFProtect._get_ip_address)
 def test_denied_ips():
