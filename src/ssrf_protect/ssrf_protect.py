@@ -68,6 +68,12 @@ class SSRFProtect(object):
         """
 
         ip_address_ = cls._get_ip_address(url)
+        denied_ip_addresses = options.get('denied_ip_addresses', [])
+        if len(denied_ip_addresses) > 0 and \
+                text_type(ip_address_) in denied_ip_addresses:
+            raise SSRFProtectException('URL {url} is not allowed because it resolves '
+                                       'to a denied ip address'.format(url=url))
+
         allowed_ip_addresses = options.get('allowed_ip_addresses', [])
         if len(allowed_ip_addresses) > 0 and \
                 text_type(ip_address_) in allowed_ip_addresses:
@@ -76,11 +82,5 @@ class SSRFProtect(object):
         if cls.__is_internal_address(ip_address_):
             raise SSRFProtectException('URL {url} is not allowed because it resolves '
                                        'to a private IP address'.format(url=url))
-
-        denied_ip_addresses = options.get('denied_ip_addresses', [])
-        if len(denied_ip_addresses) > 0 and \
-                text_type(ip_address_) in denied_ip_addresses:
-            raise SSRFProtectException('URL {url} is not allowed because it resolves '
-                                       'to a denied ip address'.format(url=url))
 
         return
