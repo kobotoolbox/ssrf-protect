@@ -27,6 +27,23 @@ def test_allowed_ips():
     }
     assert SSRFProtect.validate(url, options=options) is None
 
+
+def test_allowed_and_denied_ips():
+    # Because denial comes first, if an ip is allowed and denied
+    # an exception should be raised
+    url = 'http://127.0.0.1/test'
+    options = {
+        'denied_ip_addresses': ['127.0.0.1'],
+        'allowed_ip_addresses': ['127.0.0.1']
+    }
+
+    with pytest.raises(SSRFProtectException) as excinfo:
+        SSRFProtect.validate(url, options)
+
+    assert 'URL {url} is not allowed because it resolves to ' \
+           'a denied IP address'.format(url=url) == str(excinfo.value)
+
+
 @patch('ssrf_protect.ssrf_protect.SSRFProtect._get_ip_address',
        new=MockSSRFProtect._get_ip_address)
 def test_denied_ips():
@@ -39,4 +56,4 @@ def test_denied_ips():
         SSRFProtect.validate(url, options)
 
     assert 'URL {url} is not allowed because it resolves to ' \
-           'a denied ip address'.format(url=url) == str(excinfo.value)
+           'a denied IP address'.format(url=url) == str(excinfo.value)
