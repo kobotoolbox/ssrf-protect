@@ -41,7 +41,7 @@ def test_allowed_and_denied_ips():
         SSRFProtect.validate(url, options)
 
     assert 'URL {url} is not allowed because it resolves to ' \
-           'a denied ip address'.format(url=url) == str(excinfo.value)
+           'a denied IP address'.format(url=url) == str(excinfo.value)
 
 
 @patch('ssrf_protect.ssrf_protect.SSRFProtect._get_ip_address',
@@ -56,4 +56,4 @@ def test_denied_ips():
         SSRFProtect.validate(url, options)
 
     assert 'URL {url} is not allowed because it resolves to ' \
-           'a denied ip address'.format(url=url) == str(excinfo.value)
+           'a denied IP address'.format(url=url) == str(excinfo.value)

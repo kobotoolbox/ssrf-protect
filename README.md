@@ -27,7 +27,7 @@ SSRFProtect.validate(url)  # Raise SSRFProtectException
 requests.get(url)  # request is not processed
 ``` 
 
-### Whitelisted ip addresses
+### Whitelisted IP addresses
 ```python
 import requests
 from ssrf_protect.ssrf_protect import SSRFProtect
@@ -41,7 +41,7 @@ SSRFProtect.validate(url, options=options)
 requests.get(url) # request is processed
 ``` 
 
-### Blacklisted ip addresses
+### Blacklisted IP addresses
 ```python
 import requests
 from ssrf_protect.ssrf_protect import SSRFProtect

@@ -44,12 +44,12 @@ class SSRFProtect(object):
             except AttributeError:
                 # `urlparse` receives an invalid parameter
                 raise SSRFProtectException(
-                    'Invalid url `{url}`'.format(url=url))
+                    'Invalid URL `{url}`'.format(url=url))
             except (ValueError, TypeError, socket.gaierror):
                 # `TypeError`, `socket.gaierror: `socket.gethostbyname` receives an invalid parameter
                 # `ValueError`: `ip_address` receives an invalid parameter
                 raise SSRFProtectException(
-                    'Cannot resolve ip address for `{host}`'.format(host=host))
+                    'Cannot resolve IP address for `{host}`'.format(host=host))
 
     @classmethod
     def validate(cls, url, options={}):
@@ -72,7 +72,7 @@ class SSRFProtect(object):
         if len(denied_ip_addresses) > 0 and \
                 text_type(ip_address_) in denied_ip_addresses:
             raise SSRFProtectException('URL {url} is not allowed because it resolves '
-                                       'to a denied ip address'.format(url=url))
+                                       'to a denied IP address'.format(url=url))
 
         allowed_ip_addresses = options.get('allowed_ip_addresses', [])
         if len(allowed_ip_addresses) > 0 and \
