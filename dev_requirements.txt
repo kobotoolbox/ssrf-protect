@@ -7,6 +7,3 @@
 # Install testing / development requirements
 pytest
 mock
-six
-
-# For versions before Python 3.3, add `ipaddress`

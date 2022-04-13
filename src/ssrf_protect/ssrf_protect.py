@@ -1,19 +1,14 @@
 # coding: utf-8
-from __future__ import absolute_import, unicode_literals
-
 import socket
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from typing import Union, Dict
+from urllib.parse import urlparse
 
-from ipaddress import ip_address
-from six import text_type
+from ipaddress import ip_address, IPv4Address, IPv6Address
 
 from .exceptions import SSRFProtectException
 
 
-class SSRFProtect(object):
+class SSRFProtect:
     """
     This class exposes only one static method which validates URLs
 
@@ -24,7 +19,9 @@ class SSRFProtect(object):
         pass
 
     @staticmethod
-    def __is_internal_address(ip_address_):
+    def __is_internal_address(
+        ip_address_: Union[IPv4Address, IPv6Address]
+    ) -> bool:
         return any([
             ip_address_.is_private,
             ip_address_.is_reserved,
@@ -34,13 +31,13 @@ class SSRFProtect(object):
         ])
 
     @staticmethod
-    def _get_ip_address(url):
+    def _get_ip_address(url: str) -> Union[IPv4Address, IPv6Address]:
         try:
-            return ip_address(text_type(url))
+            return ip_address(url)
         except ValueError:
             try:
                 host = urlparse(url).hostname
-                return ip_address(text_type(socket.gethostbyname(host)))
+                return ip_address(str(socket.gethostbyname(host)))
             except AttributeError:
                 # `urlparse` receives an invalid parameter
                 raise SSRFProtectException(
@@ -52,7 +49,7 @@ class SSRFProtect(object):
                     'Cannot resolve IP address for `{host}`'.format(host=host))
 
     @classmethod
-    def validate(cls, url, options={}):
+    def validate(cls, url: str, options: Dict = {}):
         """
         Validates if url resolves to a private IP address.
 
@@ -69,14 +66,18 @@ class SSRFProtect(object):
 
         ip_address_ = cls._get_ip_address(url)
         denied_ip_addresses = options.get('denied_ip_addresses', [])
-        if len(denied_ip_addresses) > 0 and \
-                text_type(ip_address_) in denied_ip_addresses:
+        if (
+            len(denied_ip_addresses) > 0
+            and str(ip_address_) in denied_ip_addresses
+        ):
             raise SSRFProtectException('URL {url} is not allowed because it resolves '
                                        'to a denied IP address'.format(url=url))
 
         allowed_ip_addresses = options.get('allowed_ip_addresses', [])
-        if len(allowed_ip_addresses) > 0 and \
-                text_type(ip_address_) in allowed_ip_addresses:
+        if (
+            len(allowed_ip_addresses) > 0
+            and str(ip_address_) in allowed_ip_addresses
+        ):
             return
 
         if cls.__is_internal_address(ip_address_):
